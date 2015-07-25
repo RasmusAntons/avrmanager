@@ -11,62 +11,41 @@ FILE *avrdude_cmd(char *cmd)
 	return output;
 }
 
-int avrdude_get_avrs(char ***avrs, int *n_avrs)
+int get_avrs_or_isps(StrList *list, int *number, char * cmd, char *startseq)
 {
-	char **result;
-	char avrbuffer[80][10];
-	int n = 0, c = 0;
 	int i, j;
 	int active_zone = FALSE;
 	char buffer[120];
-	FILE *output = avrdude_cmd("-c 01234");
+	FILE *output = avrdude_cmd(cmd);
 	while (fgets(buffer, 120, output) != NULL)
 	{
-		if (!strcmp(buffer, "Valid programmers are:\n"))
+		if (!strcmp(buffer, startseq))
 			active_zone = TRUE;
 		else if (!strcmp(buffer, "\n"))
 			active_zone = FALSE;
 		else if (active_zone)
 		{
-			if (c >= 9)
-			{
-				char **old = result;
-				result = malloc((n + c) * sizeof(char*));
-				memcpy(result, old, n);
-				memcpy(result + n, avrbuffer, c);
-				n = n + c;
-				//for (i = 0; i < n; i++)
-				//	free(old[i]);
-				//TODO: FREE!!!
-				c = 0;
-			}
 			i = 0;
 			while (buffer[i] == ' ')
 				i++;
 			j = i;
 			while (buffer[j] != '\0' && buffer[j] != ' ' && buffer[j] != '=')
 				j++;
-			strncpy(avrbuffer[c], buffer + i, j - i);
-			avrbuffer[c][j - i] = '\0';
-			//println_to_terminal(ispbuffer[c], FALSE);
-			c++;
+			char *entry = malloc((j - i + 1) * sizeof(char));
+			strncpy(entry, buffer + i, j - i);
+			entry[j - i] = '\0';
+			strlist_insert(list, entry);
+			*number++;
 		}
 	}
-	char **old = result;
-	result = malloc((n + c) * sizeof(char*));
-	memcpy(result, old, n);
-	memcpy(result + n, avrbuffer, c);
-	n = n + c;
-	
-	*n_avrs = 1;
-	
-	//for (i = 0; i < *n_avrs; i++)
-	//	println_to_terminal(*avrs[i]);
-	//free(avrs);
-	*avrs = result;	
 }
 
-int avrdude_get_isps(char **dest)
+int avrdude_get_avrs(StrList *avrs, int *n_avrs)
 {
-	
+	return get_avrs_or_isps(avrs, n_avrs, "-c 01234", "Valid programmers are:\n");
+}
+
+int avrdude_get_isps(StrList *isps, int *n_isps)
+{
+	return get_avrs_or_isps(isps, n_isps, "-c avrisp", "Valid parts are:\n");
 }

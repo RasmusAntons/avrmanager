@@ -1,6 +1,7 @@
 #include <geanyplugin.h>
 #include <gtk/gtk.h>
 #include <malloc.h>
+#include "strlist.h"
 #include "avrdude.h"
 
 GeanyPlugin *geany_plugin;
@@ -10,7 +11,8 @@ GeanyFunctions *geany_functions;
 PLUGIN_VERSION_CHECK(211);
 PLUGIN_SET_INFO("AVR Manager", "TODO: write info text", "0.0", "Rasmus Antons <mail@rasmusantons.de>");
 
-char **isps, **avrs;
+//char **isps, **avrs;
+StrList *isps, *avrs;
 int n_isps, n_avrs;
 
 static GtkWidget *main_menu_item,
@@ -77,11 +79,9 @@ void init_window()
 	gtk_box_pack_start(GTK_BOX(main_vbox), top_row, FALSE, FALSE, 0);
 	
 	top_row_isp = gtk_combo_box_new_text();
-	gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_isp), "avrdude sucks");
 	gtk_box_pack_start(GTK_BOX(top_row), top_row_isp, FALSE, FALSE, 0);
 	
 	top_row_avr = gtk_combo_box_new_text();
-	gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_avr), "avrdude sucks");
 	gtk_box_pack_start(GTK_BOX(top_row), top_row_avr, FALSE, FALSE, 0);
 	
 	//BOTTOM
@@ -135,26 +135,14 @@ void item_activate_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
 	init_window();
 	
-	char buffer[120];
-	
-	/*
-	FILE *avrhelp = avrdude_cmd("-h");
-	while (fgets(buffer, 120, avrhelp) != NULL)
-	{
-		print_to_terminal(buffer, FALSE);
-	}
-	*/
-	
-	avrdude_get_avrs(&avrs, &n_avrs);
-	int i;
-	char *s;
-	asprintf(&s, "%d", n_avrs);
-	println_to_terminal(s, FALSE);
-	for (i = 0; i < n_avrs; i++)
-		{
-			println_to_terminal(avrs[i], FALSE);
-			gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_avr), avrs[i]);
-		}
+	avrs = strlist_new();
+	avrdude_get_avrs(avrs, &n_avrs);
+	while (strlist_has_next(avrs))
+		gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_avr), strlist_get_next(avrs));
+	isps = strlist_new();
+	avrdude_get_isps(isps, &n_isps);
+	while (strlist_has_next(isps))
+		gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_isp), strlist_get_next(isps));
 }
 
 void plugin_init(GeanyData *data)
