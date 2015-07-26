@@ -78,9 +78,13 @@ void init_window()
 	top_row = gtk_hbox_new(FALSE, 1);
 	gtk_box_pack_start(GTK_BOX(main_vbox), top_row, FALSE, FALSE, 0);
 	
+	GtkWidget *isp_label = gtk_widget_new(GTK_TYPE_LABEL, "label", "ISP:", 0.0, NULL);
+	gtk_box_pack_start(GTK_BOX(top_row), isp_label, FALSE, FALSE, 5);
 	top_row_isp = gtk_combo_box_new_text();
 	gtk_box_pack_start(GTK_BOX(top_row), top_row_isp, FALSE, FALSE, 0);
 	
+	GtkWidget *avr_label = gtk_widget_new(GTK_TYPE_LABEL, "label", "AVR:", 0.0, NULL);
+	gtk_box_pack_start(GTK_BOX(top_row), avr_label, FALSE, FALSE, 5);
 	top_row_avr = gtk_combo_box_new_text();
 	gtk_box_pack_start(GTK_BOX(top_row), top_row_avr, FALSE, FALSE, 0);
 	
@@ -97,18 +101,23 @@ void init_window()
 	gtk_box_pack_start(GTK_BOX(main_vbox), main_notebook, TRUE, TRUE, 0);
 	gtk_notebook_set_scrollable(GTK_NOTEBOOK(main_notebook), TRUE);
 	
+	//MEMORY
 	main_memory = gtk_table_new(1, 1, TRUE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(main_notebook), main_memory, gtk_label_new ("Memory"));
 	
+	//FUSES
 	main_fuses = gtk_table_new(1, 1, TRUE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(main_notebook), main_fuses, gtk_label_new ("Fuses"));
 	
+	//MAKE
 	main_makefile = gtk_table_new(1, 1, TRUE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(main_notebook), main_makefile, gtk_label_new ("Makefile"));
 	
+	//SETTINGS
 	main_settings = gtk_table_new(1, 1, TRUE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(main_notebook), main_settings, gtk_label_new ("Settings"));
 	
+	//COMMANDS
 	main_commands = gtk_table_new(1, 1, TRUE);
 	gtk_notebook_append_page(GTK_NOTEBOOK(main_notebook), main_commands, gtk_label_new ("Commands"));
 	
