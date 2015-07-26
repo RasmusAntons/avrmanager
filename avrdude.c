@@ -42,10 +42,10 @@ int get_avrs_or_isps(StrList *list, int *number, char * cmd, char *startseq)
 
 int avrdude_get_avrs(StrList *avrs, int *n_avrs)
 {
-	return get_avrs_or_isps(avrs, n_avrs, "-c 01234", "Valid programmers are:\n");
+	return get_avrs_or_isps(avrs, n_avrs, "-c avrisp", "Valid parts are:\n");
 }
 
 int avrdude_get_isps(StrList *isps, int *n_isps)
 {
-	return get_avrs_or_isps(isps, n_isps, "-c avrisp", "Valid parts are:\n");
+	return get_avrs_or_isps(isps, n_isps, "-c 01234", "Valid programmers are:\n");
 }

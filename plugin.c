@@ -11,7 +11,6 @@ GeanyFunctions *geany_functions;
 PLUGIN_VERSION_CHECK(211);
 PLUGIN_SET_INFO("AVR Manager", "TODO: write info text", "0.0", "Rasmus Antons <mail@rasmusantons.de>");
 
-//char **isps, **avrs;
 StrList *isps, *avrs;
 int n_isps, n_avrs;
 
@@ -81,11 +80,13 @@ void init_window()
 	GtkWidget *isp_label = gtk_widget_new(GTK_TYPE_LABEL, "label", "ISP:", 0.0, NULL);
 	gtk_box_pack_start(GTK_BOX(top_row), isp_label, FALSE, FALSE, 5);
 	top_row_isp = gtk_combo_box_new_text();
+	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(top_row_isp), 5);
 	gtk_box_pack_start(GTK_BOX(top_row), top_row_isp, FALSE, FALSE, 0);
 	
 	GtkWidget *avr_label = gtk_widget_new(GTK_TYPE_LABEL, "label", "AVR:", 0.0, NULL);
 	gtk_box_pack_start(GTK_BOX(top_row), avr_label, FALSE, FALSE, 5);
 	top_row_avr = gtk_combo_box_new_text();
+	gtk_combo_box_set_wrap_width(GTK_COMBO_BOX(top_row_avr), 7);
 	gtk_box_pack_start(GTK_BOX(top_row), top_row_avr, FALSE, FALSE, 0);
 	
 	//BOTTOM
@@ -144,14 +145,15 @@ void item_activate_cb(GtkMenuItem *menuitem, gpointer user_data)
 {
 	init_window();
 	
-	avrs = strlist_new();
-	avrdude_get_avrs(avrs, &n_avrs);
-	while (strlist_has_next(avrs))
-		gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_avr), strlist_get_next(avrs));
 	isps = strlist_new();
 	avrdude_get_isps(isps, &n_isps);
 	while (strlist_has_next(isps))
 		gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_isp), strlist_get_next(isps));
+	
+	avrs = strlist_new();
+	avrdude_get_avrs(avrs, &n_avrs);
+	while (strlist_has_next(avrs))
+		gtk_combo_box_append_text(GTK_COMBO_BOX(top_row_avr), strlist_get_next(avrs));
 }
 
 void plugin_init(GeanyData *data)
